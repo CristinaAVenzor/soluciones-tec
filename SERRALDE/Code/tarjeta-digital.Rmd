@@ -1,0 +1,230 @@
+---
+output: 
+  word_document:
+    reference_docx: "template.docx"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE)
+```
+
+```{r include=FALSE}
+foco <- "BTS120928RZ8"
+```
+
+```{r include=FALSE}
+# Required Packages, Fonts, ggplot theme, color palettes, comparison countries and other general routines are
+# loaded from the following script:
+source("/Users/cristinaalvarez/Documents/GitHub/soluciones-tec/SERRALDE/code/settings.R")
+
+# Loading data
+empresas <- read_excel(paste0(path2DB,"/Data/empresas.xlsx")) 
+personal <- read_excel(paste0(path2DB,"/Data/personal.xlsx"))
+equipo <- read_excel(paste0(path2DB,"/Data/equipo.xlsx"))
+uniformes <- read_excel(paste0(path2DB,"/Data/uniformes.xlsx"))
+```
+
+```{r include=FALSE}
+nombre <- empresas %>% 
+          filter(RFC == foco) %>% 
+          pull(`NOMBRE DE LA EMPRESA`)
+```
+
+
+# `r nombre`
+
+\
+
+fecha de actualización: `r Sys.Date()`
+
+\
+
+## Descripción de empresa
+
+```{r include=FALSE}
+empresas <- empresas %>% 
+          filter(RFC == foco) %>% 
+          mutate(across(everything(), as.character)) %>% 
+          select(EXPEDIENTE,`NUMERO DE REGISTRO`, `DESCRIPCION DE LAS MODALIDADES AUTORIZADAS`, `DOMICILIO MATRIZ`, `CORREO ELECTRONICO` ) %>% 
+          pivot_longer(cols = everything(), names_to = "Datos Generales", values_to = " ") %>% 
+          drop_na() 
+```
+
+
+```{r echo=FALSE}
+
+set_flextable_defaults(
+  font.size = 8,
+  width =  1.5)
+
+ficha <- flextable(empresas)%>% 
+  theme_zebra() %>% 
+  autofit() %>%                   
+  width(j = 1, width = 3.5) %>%   
+  width(j = 2, width = 2.5) %>% 
+  fontsize(j = ~ `Datos Generales` , size = 7) %>% 
+  fontsize(j = ~ ` ` , size = 7) %>% 
+  font(fontname = "Arial", part = "all") %>%
+  bg(part = "header", bg = "#8FC8F4")
+ficha
+```
+
+## Descripción de colaboradores
+
+```{r include=FALSE}
+personal_count <- personal %>% 
+          filter(`RFC EMPRESARIAL` == foco) %>% 
+          select(AREA, INFORME_MENSUAL, INSCRITOS) %>% 
+          group_by(AREA) %>%
+          summarise(INFORME_MENSUAL = sum(INFORME_MENSUAL),
+                    INSCRITOS = sum(INSCRITOS))
+```
+
+
+```{r echo=FALSE}
+ficha <- flextable(personal_count)%>% 
+  theme_zebra() %>% 
+  autofit() %>% 
+  font(fontname = "Arial", part = "all") %>%
+  bg(part = "header", bg = "#8FC8F4")
+ficha
+```
+
+
+## Descripción de uniformes
+
+```{r include=FALSE}
+uniformes_count <- uniformes %>% 
+          filter(`RFC EMPRESARIAL` == foco) %>% 
+          select(where(~ !any(is.na(.))))%>%
+          group_by(UNIFORMES) %>%
+          summarise(INFORME_MENSUAL = sum(INFORME_MENSUAL),
+                    INSCRITOS = sum(INSCRITOS))
+```
+
+
+```{r echo=FALSE}
+ficha <- flextable(uniformes_count)%>% 
+  theme_zebra() %>% 
+  autofit() %>% 
+  font(fontname = "Arial", part = "all") %>%
+  bg(part = "header", bg = "#8FC8F4")
+ficha
+```
+
+## Descripción de equipo
+
+```{r include=FALSE}
+equipo_count <- equipo %>% 
+          filter(`RFC EMPRESARIAL` == foco) %>% 
+          select(where(~ !any(is.na(.))))%>%
+          group_by(EQUIPO) %>%
+          summarise(INFORME_MENSUAL = sum(INFORME_MENSUAL),
+                    INSCRITOS = sum(INSCRITAS))
+```
+
+
+```{r echo=FALSE}
+ficha <- flextable(equipo_count)%>% 
+  theme_zebra() %>% 
+  autofit() %>% 
+  font(fontname = "Arial", part = "all") %>%
+  bg(part = "header", bg = "#8FC8F4")
+ficha
+```
+
+
+\newpage
+
+# ACCIONES A REALIZAR
+
+### 1. ALTA PERSONAL DIRECTIVO, ADMINISTRATIVO Y OPERATIVO\
+
+PERSONAL DIRECTIVO Y ADMINISTRATIVO\
+```{r include=FALSE}
+personal_list <- personal %>% 
+          filter(`RFC EMPRESARIAL` == foco, 
+                 AREA != "OPERATIVO") %>% 
+          select(NOMBRE, CURP, AREA) %>% 
+          mutate(NO = row_number()) %>%
+          select(NO, everything())
+```
+
+
+```{r echo=FALSE}
+ficha <- flextable(personal_list)%>% 
+  theme_zebra() %>% 
+  autofit() %>%                   
+  width(j = 1, width = 0.5) %>%   
+  width(j = 2, width = 2.5) %>% 
+  font(fontname = "Arial", part = "all") %>%
+  bg(part = "header", bg = "#BDC1C1")
+ficha
+```
+
+
+\
+Para dar de alta al personal antes mencionado deberá enviar:\
+
+a) copia de identificación oficial vigente, 
+
+b) copia de acta de nacimiento, 
+
+c) comprobante de domicilio (no mayor a tres meses), 
+
+d) Constancia de RFC, 
+
+e) CURP y, 
+
+f) Comprobante de grado máximo de estudios.\
+
+
+PERSONAL OPERATIVO\
+
+```{r include=FALSE}
+personal_list <- personal %>% 
+          filter(`RFC EMPRESARIAL` == foco, 
+                 AREA == "OPERATIVO") %>% 
+          select(NOMBRE, CURP, AREA) %>% 
+          mutate(NO = row_number()) %>%
+          select(NO, everything())
+```
+
+
+```{r echo=FALSE}
+ficha <- flextable(personal_list)%>% 
+  theme_zebra() %>% 
+  autofit() %>%                   
+  width(j = 1, width = 0.5) %>%   
+  width(j = 2, width = 2.5) %>% 
+  font(fontname = "Arial", part = "all") %>%
+  bg(part = "header", bg = "#BDC1C1")
+ficha
+```
+
+\
+
+Para dar de alta al personal antes mencionado deberá enviar:\
+
+a) Cédula de inscripción (cédula, huellas y fotografías)
+
+b) Original de pago de derechos por la cantidad de **$213.00** por cada elemento a inscribir\
+
+
+### 2.- ALTA DE EQUIPO\
+
+1.- ACTUALIZAR APARATOS ELÉCTRONICOS\
+
+a) Copia de factura o nota de compra (adquisición) de los aparatos electrónicos 
+
+b) Original de pago de derechos por la cantidad de **$70.00** por cada aparato electrónico\ 
+
+\
+
+2.- ACTUALIZAR UNIFORMES\
+
+a) Copia de factura o nota de compra (adquisición) de los uniformes 
+
+b) Fotografías de uniforme Imágenes de las cuatro vistas  con insignia (logotipo o emblema, nombre del prestados de servicios y la palabra “Seguridad Privada”
+
+c) Original de pago de derechos por la cantidad de **$70.00** por cada modelo de uniforme 
