@@ -1,0 +1,166 @@
+---
+output: 
+  word_document:
+    reference_docx: "Copia de template.docx"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE)
+```
+
+```{r include=FALSE}
+foco <- "BTS120928RZ8"
+```
+
+```{r include=FALSE}
+# Required Packages, Fonts, ggplot theme, color palettes, comparison countries and other general routines are
+# loaded from the following script:
+source("/Users/cristinaalvarez/Documents/GitHub/soluciones-tec/SERRALDE/code/settings.R")
+
+# Loading data
+empresas <- read_excel(paste0(path2DB,"/Data/empresas.xlsx")) 
+personal <- read_excel(paste0(path2DB,"/Data/personal.xlsx"))
+equipo <- read_excel(paste0(path2DB,"/Data/equipo.xlsx"))
+uniformes <- read_excel(paste0(path2DB,"/Data/uniformes.xlsx"))
+```
+
+```{r include=FALSE}
+nombre <- empresas %>% 
+          filter(RFC == foco) %>% 
+          pull(`NOMBRE DE LA EMPRESA`)
+
+representante_legal <- empresas %>% 
+          filter(RFC == foco) %>% 
+          pull(`REPRESENTANTE LEGAL`)
+
+expediente <- empresas %>% 
+          filter(RFC == foco) %>% 
+          pull(EXPEDIENTE)
+```
+
+
+
+# SECRETARÍA DE SEGURIDAD Y PROTECCIÓN CIUDADANA
+# DIRECCIÓN GENERAL DE SEGURIDAD PRIVADA
+# Trámite de Autorización para la prestación de servicios de seguridad privada.
+# Ciudad de México, 05 de junio de 2020
+# Asunto: Listado actualizado de personal.
+# Número de expediente: `r expediente`\
+
+
+<br />
+
+**Director General de Seguridad Privada**\
+**Secretaría de Seguridad y Protección Ciudadana**\
+
+<br />
+
+**`r representante_legal`**,  en mi carácter de representante legal de **`r nombre`**, personalidad que tengo debidamente acreditada en el expediente al rubro citado, con fundamento en lo dispuesto en los artículos 1, 25 y demás relativos y aplicables de la Ley Federal de Seguridad Privada y su Reglamento, acudo ante esa Dirección General a su digno cargo en los términos siguientes:\
+
+Bajo protesta de decir verdad, en términos de lo dispuesto por el artículo 247, fracción I, del Código Penal Federal, presento ante esa Dirección General los listados actualizados POR SEPARADO de personal directivo, administrativo y operativo, donde se consignan los datos que se señalan en el siguiente cuadro:\
+
+Personal Directivo\
+
+```{r include=FALSE}
+personal_list <- personal %>% 
+          filter(`RFC EMPRESARIAL` == foco, 
+                 AREA == "DIRECTIVO") %>% 
+          select(NOMBRE, DIRECCIÓN, EDAD, `LUGAR Y FECHA DE NACIMIENTO`, RFC, CURP, AREA, `GRADO DE ESTUDIOS` ) 
+```
+
+
+```{r echo=FALSE}
+set_flextable_defaults(
+  font.size = 7,
+  width =  1.5)
+
+ficha <- flextable(personal_list) %>% 
+        font(fontname = "Arial", part = "all") %>% 
+        width(j = 8, width = .9) %>% 
+        width(j = 4, width = .9) %>%
+        theme_box()
+ficha
+```
+
+<br />
+
+Personal Administrativo\
+
+```{r include=FALSE}
+personal_list <- personal %>% 
+          filter(`RFC EMPRESARIAL` == foco, 
+                 AREA == "ADMINISTRATIVO") %>% 
+          select(NOMBRE, DIRECCIÓN, EDAD, `LUGAR Y FECHA DE NACIMIENTO`, RFC, CURP, AREA, `GRADO DE ESTUDIOS` )
+```
+
+
+```{r echo=FALSE}
+set_flextable_defaults(
+  font.size = 7,
+  width =  1.5)
+
+ficha <- flextable(personal_list) %>% 
+        font(fontname = "Arial", part = "all") %>% 
+        width(j = 8, width = .9) %>% 
+        width(j = 4, width = .9) %>%
+        theme_box()
+ficha
+```
+
+<br />
+
+Personal Técnico u Operativo\
+
+
+```{r include=FALSE}
+personal_list <- personal %>% 
+          filter(`RFC EMPRESARIAL` == foco, 
+                 AREA == "OPERATIVO") %>% 
+          select(NOMBRE, DIRECCIÓN, EDAD, `LUGAR Y FECHA DE NACIMIENTO`, RFC, CURP, AREA, `GRADO DE ESTUDIOS` )
+```
+
+
+```{r echo=FALSE}
+set_flextable_defaults(
+  font.size = 7,
+  width =  1.5)
+
+ficha <- flextable(personal_list) %>% 
+        font(fontname = "Arial", part = "all") %>% 
+        width(j = 8, width = .9) %>% 
+        width(j = 4, width = .9) %>%
+        theme_box()
+ficha
+```
+
+<br />
+
+Lo anterior en cumplimiento a lo dispuesto por el artículo 19 de la Ley Federal de Seguridad Privada.\
+<br />
+
+Por lo expuesto anteriormente, atentamente y respetuosamente solicito:\
+<br />
+
+**ÚNICO. -** Se tenga por presentado este escrito en los términos que se contienen en cumplimiento a la Ley Federal de Seguridad Privada y su reglamento, con la finalidad de que se resuelva favorablemente la solicitud de mi representada en los términos que se exponen.\
+
+<br />
+
+Sin otro asunto que tratar por el momento, respetuosamente quedo de Ud.\
+
+<br />
+<br />
+
+### **PROTESTO LO NECESARIO**\
+
+### ________________
+
+### **`r representante_legal`**
+
+
+### **REPRESENTANTE LEGAL DE**
+
+### **`r nombre`**
+
+
+
+
