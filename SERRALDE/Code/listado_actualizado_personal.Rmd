@@ -9,7 +9,7 @@ knitr::opts_chunk$set(include = TRUE)
 ```
 
 ```{r include=FALSE}
-foco <- "BTS120928RZ8"
+foco <- "ALS140530JX9"
 ```
 
 ```{r include=FALSE}
